@@ -10,6 +10,7 @@
     "dev": "nodemon ./src/bin",
     "lint": "eslint src --fix",
     "test": "jest",
+    "test:cov": "jest --coverage",
     "format": "prettier --write 'src/**/*.js'"
   },
   "dependencies": {
@@ -49,7 +50,6 @@
     "semi": false
   },
   "jest": {
-    "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.js",
       "!**/node_modules/**"
