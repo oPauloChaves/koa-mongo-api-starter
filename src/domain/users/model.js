@@ -38,11 +38,9 @@ UserSchema.pre('save', async function(next) {
   next()
 })
 
-UserSchema.post('save', function(error, doc, next) {
+UserSchema.post('save', function postSave(error, doc, next) {
   if (error.name === 'MongoError' && error.code === 11000) {
-    next(
-      new DuplicateKeyError(`email;email ${doc.email} has already been taken.`)
-    )
+    next(new DuplicateKeyError(`email has already been taken.`))
   } else {
     next(error)
   }

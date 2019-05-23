@@ -1,25 +1,25 @@
+const debug = require('debug')('app:mongoose')
 const mongoose = require('mongoose')
 const config = require('../config')
 
-mongoose.Promise = global.Promise
-
 module.exports = app => {
-  mongoose
-    .connect(config.mongoURI, {
-      useMongoClient: true,
-      socketTimeoutMS: 0,
-      keepAlive: true,
-      reconnectTries: 15
-    })
-    .then(conn => {
-      console.log(`MongoDB connected on ${config.env.env} mode`)
-    })
-    .catch(err => {
-      console.error(err)
-      process.exit(1)
-    })
+  if (process.env.NODE_ENV !== 'test') {
+    mongoose
+      .connect(config.mongoURI, {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        reconnectTries: 30
+      })
+      .then(conn => {
+        debug(`MongoDB connected on ${config.env.env} mode`)
+      })
+      .catch(err => {
+        console.error(err)
+        process.exit(1)
+      })
+  }
 
-  return async function(ctx, next) {
+  return function(ctx, next) {
     return next()
   }
 }

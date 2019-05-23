@@ -2,21 +2,20 @@
   "name": "finances-api",
   "version": "0.0.1",
   "description": "A boilerplate to get started with Koa, MongoDB and Docker",
-  "main": "index.js",
+  "main": "src/app.js",
   "author": "Paulo Chaves <opaulochaves@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./src/bin",
-    "dev": "nodemon ./src/bin",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "lint": "eslint src --fix",
-    "test": "jest",
-    "test:cov": "jest --coverage",
-    "format": "prettier --write 'src/**/*.js'"
+    "format": "prettier --write 'src/**/*.js'",
+    "test": "NODE_ENV=test mocha './test/**/*.test.js'"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "debug": "^4.1.1",
     "dotenv": "^4.0.0",
-    "http-shutdown": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "kcors": "^2.2.1",
     "koa": "^2.3.0",
@@ -27,11 +26,10 @@
     "koa-response-time": "^2.0.0",
     "koa-router": "^7.2.1",
     "lodash": "^4.17.4",
-    "mongoose": "^4.11.7",
+    "mongoose": "^5.5.11",
     "yup": "^0.21.3"
   },
   "devDependencies": {
-    "ava": "^0.22.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-config-standard": "^12.0.0",
@@ -40,21 +38,17 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jest": "^24.8.0",
+    "mocha": "^6.1.4",
+    "mongodb-memory-server": "^5.1.2",
     "nodemon": "^1.11.0",
     "prettier": "^1.17.1",
+    "should": "^13.2.3",
     "supertest": "^4.0.2"
   },
   "prettier": {
     "singleQuote": true,
-    "semi": false
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "!**/node_modules/**"
-    ],
-    "coverageDirectory": "coverage"
+    "semi": false,
+    "width": 100
   },
   "engines": {
     "node": ">= 8.0.0"

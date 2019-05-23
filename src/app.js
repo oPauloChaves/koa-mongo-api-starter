@@ -1,9 +1,10 @@
-const config = require('./config')
-const http = require('http')
-const Koa = require('koa')
-const mongoose = require('mongoose')
+require('dotenv').config()
 
-const app = new Koa()
+const Debug = require('debug')
+const config = require('./config')
+const Koa = require('koa')
+
+const app = (module.exports = new Koa())
 
 const responseTime = require('koa-response-time')
 const helmet = require('koa-helmet')
@@ -17,6 +18,7 @@ const pagerMiddleware = require('./middleware/pager')
 const db = require('./middleware/database')
 
 const routes = require('./routes')
+const debug = Debug('app:server')
 
 require('./domain/schemas')(app)
 
@@ -38,28 +40,31 @@ app.use(pagerMiddleware)
 app.use(routes.routes())
 app.use(routes.allowedMethods())
 
-app.server = require('http-shutdown')(http.createServer(app.callback()))
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error
+  }
 
-app.shutDown = function shutDown() {
-  let err
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
-  console.log('Shutdown')
-
-  if (this.server.listening) {
-    this.server.shutdown(error => {
-      if (error) {
-        console.error(error)
-        err = error
-      }
-
-      mongoose.connection.close(function() {
-        console.log(
-          'Mongoose default connection disconnected through app shutdown'
-        )
-        process.exit(err ? 1 : 0)
-      })
-    })
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges')
+      process.exit(1)
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use')
+      process.exit(1)
+    default:
+      throw error
   }
 }
 
-module.exports = app
+app.on('error', onError)
+
+const { port } = config.server
+
+if (!module.parent) {
+  app.listen(port, () => {
+    debug(`Server running on port ${port} in ${process.env.NODE_ENV} mode`)
+  })
+}
