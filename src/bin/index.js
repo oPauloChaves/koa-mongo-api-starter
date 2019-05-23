@@ -1,5 +1,7 @@
 require('dotenv').config()
-const { server: { port } } = require('../config')
+const {
+  server: { port }
+} = require('../config')
 
 const app = require('../app')
 
@@ -16,9 +18,7 @@ function onError(error) {
     throw error
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
   switch (error.code) {
     case 'EACCES':
@@ -34,8 +34,6 @@ function onError(error) {
 
 function onListening() {
   var addr = app.server.address()
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
   console.log('Listening on ' + bind)
 }

@@ -1,12 +1,14 @@
 {
-  "extends": "standard",
+  "extends": ["standard", "prettier", "prettier/standard"],
+  "plugins": ["import", "prettier", "standard"],
   "env": {
+    "node": true,
     "es6": true,
-    "node": true
+    "jest": true
   },
   "rules": {
-    "semi": [2, "never"],
-    "max-len": [2, 100, 2],
-    "space-before-function-paren": "off"
+    "space-before-function-paren": 0,
+    "new-cap": 0,
+    "prettier/prettier": 2
   }
 }

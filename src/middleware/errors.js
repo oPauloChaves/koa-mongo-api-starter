@@ -3,9 +3,7 @@ const errors = require('../lib/errors')
 let constants = require('../lib/constants')
 
 Object.entries(http.STATUS_CODES).forEach(([key, value]) => {
-  constants.HTTP[key] = value
-    .toUpperCase()
-    .replace(/\s/igm, '_')
+  constants.HTTP[key] = value.toUpperCase().replace(/\s/gim, '_')
 })
 
 module.exports = async (ctx, next) => {
@@ -57,7 +55,7 @@ function formatValidationError(err) {
   if (err.inner && err.inner.length > 0) {
     err.inner
       .map(err => formatValidationError(err))
-      .reduce((prev, curr) => (Object.assign(prev, curr)), result)
+      .reduce((prev, curr) => Object.assign(prev, curr), result)
   }
   return result
 }
@@ -89,7 +87,7 @@ function formatException(err) {
   if (idx !== -1) {
     path = err.message.substring(0, idx)
     message = err.message.substring(idx + 1)
-    return {[path]: message}
+    return { [path]: message }
   }
   return message
 }

@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const ctrl = require('./controller')
-const {getAuth} = require('../../lib/helpers')
+const { getAuth } = require('../../lib/helpers')
 
 const router = new Router()
 

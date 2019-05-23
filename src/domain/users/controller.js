@@ -1,13 +1,12 @@
 const User = require('./model')
-const {generateToken} = require('../../lib/helpers')
-const {NotFoundError, UnauthorizedError} = require('../../lib/errors')
+const { generateToken } = require('../../lib/helpers')
+const { NotFoundError, UnauthorizedError } = require('../../lib/errors')
 
 module.exports = {
-
   async list(ctx) {
-    const {skip, limit} = ctx.query
+    const { skip, limit } = ctx.query
 
-    const users = await User.list({skip, limit})
+    const users = await User.list({ skip, limit })
 
     ctx.body = users
   },
@@ -16,10 +15,10 @@ module.exports = {
    * Registers a new user and logs him in by returnin a token
    */
   async register(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
+    const { body } = ctx.request
+    let { user = {} } = body
 
-    const opts = {abortEarly: false, context: {validatePassword: true}}
+    const opts = { abortEarly: false, context: { validatePassword: true } }
 
     user = await ctx.app.schemas.user.validate(user, opts)
 
@@ -29,14 +28,14 @@ module.exports = {
     ctx.set('Location', `${ctx.URL}/${user.id}`)
 
     const token = generateToken(user)
-    ctx.body = {token}
+    ctx.body = { token }
   },
 
   async update(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
+    const { body } = ctx.request
+    let { user = {} } = body
 
-    const opts = {abortEarly: false, context: {validatePassword: true}}
+    const opts = { abortEarly: false, context: { validatePassword: true } }
 
     user = await ctx.app.schemas.user.validate(user, opts)
 
@@ -58,10 +57,10 @@ module.exports = {
    * then return a token if email and password match
    */
   async login(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
+    const { body } = ctx.request
+    let { user = {} } = body
 
-    user = await ctx.app.schemas.login.validate(user, {abortEarly: false})
+    user = await ctx.app.schemas.login.validate(user, { abortEarly: false })
 
     const existingUser = await User.findByEmail(user.email)
 
@@ -69,11 +68,11 @@ module.exports = {
       throw new NotFoundError(`User with email ${user.email} not found`)
     }
 
-    if (!await existingUser.passwordMatches(user.password)) {
+    if (!(await existingUser.passwordMatches(user.password))) {
       throw new UnauthorizedError(`Email or password is invalid`)
     }
 
     const token = generateToken(existingUser)
-    ctx.body = {token}
+    ctx.body = { token }
   }
 }

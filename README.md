@@ -7,7 +7,7 @@ A boilerplate to get started building a REST API with Koa, MongoDB and Docker
 - [Koa](http://koajs.com/)
 - [Mongoose](http://mongoosejs.com/)
 - Isolated integration tests with [AVA](https://github.com/avajs/ava) and [mongomen](https://github.com/CImrie/mongomem)
-- Password encryption with [bcrypt](https://github.com/kelektiv/node.bcrypt.js)
+- Password encryption with [bcryptjs](https://github.com/dcodeIO/bcrypt.js)
 - [ESLint](https://eslint.org/) with [standard config](https://github.com/standard/eslint-config-standard)
 - [Nodemon](https://github.com/remy/nodemon) to restart the server whenever you make changes
 - Input validation with [Yup](https://github.com/jquense/yup)

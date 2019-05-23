@@ -1,32 +1,35 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const {DuplicateKeyError} = require('../../lib/errors')
+const bcrypt = require('bcryptjs')
+const { DuplicateKeyError } = require('../../lib/errors')
 
 const Schema = mongoose.Schema
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    password_reset_expires: {
+      type: Schema.Types.Date
+    },
+    password_reset_token: {
+      type: String
+    }
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  password_reset_expires: {
-    type: Schema.Types.Date
-  },
-  password_reset_token: {
-    type: String
-  }
-}, { timestamps: true })
+  { timestamps: true }
+)
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function(next) {
   const user = this
   if (!user.isModified('password')) {
     return next()
@@ -37,7 +40,9 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.post('save', function(error, doc, next) {
   if (error.name === 'MongoError' && error.code === 11000) {
-    next(new DuplicateKeyError(`email;email ${doc.email} has already been taken.`))
+    next(
+      new DuplicateKeyError(`email;email ${doc.email} has already been taken.`)
+    )
   } else {
     next(error)
   }
@@ -48,14 +53,13 @@ UserSchema.methods = {
     return bcrypt.compare(rawPassword, this.password)
   },
 
-  async updateProfile({name}) {
+  async updateProfile({ name }) {
     this.name = name
     return this.save()
   }
 }
 
 UserSchema.statics = {
-
   async getById(id) {
     const user = await this.findById(id).exec()
 
@@ -71,13 +75,12 @@ UserSchema.statics = {
   },
 
   async list({ skip = 0, limit = 20 } = {}) {
-    return this.find({}, {id: 1, name: 1, email: 1})
+    return this.find({}, { id: 1, name: 1, email: 1 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec()
   }
-
 }
 
 module.exports = mongoose.model('User', UserSchema)

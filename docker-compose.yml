@@ -2,13 +2,13 @@ version: '2'
 
 services:
   mongo:
-    image: mongo:3.4
+    image: mongo:4.0
     container_name: koaapi-db
     volumes:
       - "data_koaapi:/data/db"
     ports:
       - "27017:27017"
-    command: --smallfiles --rest
+    command: --smallfiles
 
   api:
     build:

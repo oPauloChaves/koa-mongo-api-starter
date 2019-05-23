@@ -12,7 +12,7 @@ module.exports = (ctx, next) => {
     return next()
   }
 
-  const {query} = ctx
+  const { query } = ctx
 
   query.limit = parseInt(query.limit, 10) || 20
   query.skip = query.offset = parseInt(query.offset, 10) || 0

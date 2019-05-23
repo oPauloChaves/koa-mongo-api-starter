@@ -1,9 +1,0 @@
-{
-  "libs": [
-    "ecma6",
-    "lodash"
-  ],
-  "plugins": {
-    "node": {}
-  }
-}

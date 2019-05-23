@@ -1,6 +1,6 @@
-const {loginSchema, userSchema} = require('./users/schema')
+const { loginSchema, userSchema } = require('./users/schema')
 
-module.exports = (app) => {
+module.exports = app => {
   app.schemas = {
     user: userSchema,
     login: loginSchema

@@ -24,3 +24,5 @@ node_modules
 
 .env
 .tern-port
+
+coverage
