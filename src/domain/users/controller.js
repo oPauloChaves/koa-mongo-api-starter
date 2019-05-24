@@ -17,19 +17,18 @@ module.exports = {
    */
   async register(ctx) {
     const { body } = ctx.request
-    let { user = {} } = body
 
-    const opts = { abortEarly: false, context: { validatePassword: true } }
-
-    user = await userSchema.validate(user, opts)
+    let user = await userSchema.validate(body, {
+      abortEarly: false,
+      context: { validatePassword: true }
+    })
 
     user = await new User(user).save()
 
     ctx.status = 201
     ctx.set('Location', `${ctx.URL}/${user.id}`)
 
-    const token = generateToken(user)
-    ctx.body = { token }
+    ctx.body = { token: generateToken(user) }
   },
 
   async update(ctx) {
