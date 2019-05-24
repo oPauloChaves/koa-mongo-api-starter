@@ -1,4 +1,5 @@
 const errors = require('../lib/errors')
+const { IS_TEST } = require('../config')
 
 module.exports = {
   errorHandler
@@ -24,8 +25,10 @@ async function errorHandler(ctx, next) {
       ctx.status = err.status
     }
 
-    // emit error to retain the default behaviour in Koa
-    ctx.app.emit('error', err, ctx)
+    if (!IS_TEST) {
+      // emit error to retain the default behaviour in Koa
+      ctx.app.emit('error', err, ctx)
+    }
   }
 }
 
