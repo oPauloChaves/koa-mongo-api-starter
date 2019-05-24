@@ -1,49 +1,31 @@
-const http = require('http')
 const errors = require('../lib/errors')
-let constants = require('../lib/constants')
 
-Object.entries(http.STATUS_CODES).forEach(([key, value]) => {
-  constants.HTTP[key] = value.toUpperCase().replace(/\s/gim, '_')
-})
+module.exports = {
+  errorHandler
+  // onError
+}
 
-module.exports = async (ctx, next) => {
+// function onError(error, ctx) { }
+
+async function errorHandler(ctx, next) {
   try {
     await next()
-    if (Number(ctx.response.status) === 404 && !ctx.response.body) {
-      ctx.throw(404)
-    }
   } catch (err) {
     ctx.type = 'application/json'
 
-    if (!ctx.response.body) {
-      ctx.response.body = { errors: {} }
+    if (err instanceof errors.ValidationError) {
+      ctx.body = { error: formatValidationError(err) }
+      ctx.status = 422
+    } else if (err instanceof errors.AppError) {
+      ctx.body = { error: formatException(err) }
+      ctx.status = err.status
+    } else if (err.status && err.status >= 400 && err.status < 500) {
+      ctx.body = { error: err.message }
+      ctx.status = err.status
     }
 
-    console.error(err)
-
-    switch (true) {
-      case err instanceof errors.ValidationError: {
-        ctx.body.errors = formatValidationError(err)
-        ctx.status = err.status || 422
-        break
-      }
-
-      case err instanceof errors.DuplicateKeyError: {
-        ctx.body.errors = formatException(err)
-        ctx.status = err.status || 422
-        break
-      }
-
-      case err instanceof errors.UnauthorizedError || err.status === 401: {
-        ctx.body.errors = formatException(err)
-        ctx.status = err.status || 401
-        break
-      }
-
-      default:
-        ctx.status = err.status || 500
-        break
-    }
+    // emit error to retain the default behaviour in Koa
+    ctx.app.emit('error', err, ctx)
   }
 }
 

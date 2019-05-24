@@ -20,47 +20,23 @@ const db = require('./middleware/database')
 const routes = require('./routes')
 const debug = Debug('app:server')
 
-require('./domain/schemas')(app)
-
 if (!config.IS_TEST) {
   app.use(logger())
   app.use(responseTime())
   app.use(helmet())
 }
 
-app.use(errors)
+app.use(errors.errorHandler)
 app.use(db(app))
 app.use(cors(config.CORS))
 app.use(bodyParser())
 app.use(pagerMiddleware)
 app.use(routes.routes())
 app.use(routes.allowedMethods())
-
-app.on('error', onError)
-
-const { PORT } = config
+// app.on('error', errors.onError)
 
 if (!module.parent) {
-  app.listen(PORT, () => {
-    debug(`Server running on port ${PORT} in ${config.NODE_ENV} mode`)
+  app.listen(config.PORT, () => {
+    debug(`Server running on port ${config.PORT} in ${config.NODE_ENV} mode`)
   })
-}
-
-function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error
-  }
-
-  var bind = typeof PORT === 'string' ? 'Pipe ' + PORT : 'Port ' + PORT
-
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges')
-      process.exit(1)
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use')
-      process.exit(1)
-    default:
-      throw error
-  }
 }

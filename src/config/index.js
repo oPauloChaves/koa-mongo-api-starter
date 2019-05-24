@@ -8,13 +8,15 @@ const {
   PORT = 3000,
   JWT_SECRET = 's3cr3t',
   JWT_EXPIRES_IN = '7d',
-  MONGODB_URI = 'mongodb://127.0.0.1:27017/finances'
+  MONGODB_URI = 'mongodb://127.0.0.1:27017/finances',
+  DEBUG
 } = process.env
 
 module.exports = {
   ROOT,
   SRC_DIR,
   NODE_ENV,
+  DEBUG,
 
   IS_PROD: NODE_ENV === 'production',
   IS_DEV: NODE_ENV === 'development',

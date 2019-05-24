@@ -1,6 +1,7 @@
 const User = require('./model')
 const { generateToken } = require('../../lib/helpers')
-const { NotFoundError, UnauthorizedError } = require('../../lib/errors')
+const { UnauthorizedError } = require('../../lib/errors')
+const { loginSchema, userSchema } = require('./schema')
 
 module.exports = {
   async list(ctx) {
@@ -20,7 +21,7 @@ module.exports = {
 
     const opts = { abortEarly: false, context: { validatePassword: true } }
 
-    user = await ctx.app.schemas.user.validate(user, opts)
+    user = await userSchema.validate(user, opts)
 
     user = await new User(user).save()
 
@@ -32,24 +33,20 @@ module.exports = {
   },
 
   async update(ctx) {
-    const { body } = ctx.request
-    let { user = {} } = body
-
-    const opts = { abortEarly: false, context: { validatePassword: true } }
-
-    user = await ctx.app.schemas.user.validate(user, opts)
-
-    const userId = ctx.state.user.id
-    const existingUser = await User.getById(userId)
-
-    await existingUser.updateProfile(user)
-
-    ctx.status = 200
-    ctx.body = {
-      id: existingUser.id,
-      name: existingUser.name,
-      email: existingUser.email
-    }
+    // const { body }
+    // const { body } = ctx.request
+    // let { user = {} } = body
+    // const opts = { abortEarly: false, context: { validatePassword: true } }
+    // user = await ctx.app.schemas.user.validate(user, opts)
+    // const userId = ctx.state.user.id
+    // const existingUser = await User.getById(userId)
+    // await existingUser.updateProfile(user)
+    // ctx.status = 200
+    // ctx.body = {
+    //   id: existingUser.id,
+    //   name: existingUser.name,
+    //   email: existingUser.email
+    // }
   },
 
   /**
@@ -58,21 +55,17 @@ module.exports = {
    */
   async login(ctx) {
     const { body } = ctx.request
-    let { user = {} } = body
 
-    user = await ctx.app.schemas.login.validate(user, { abortEarly: false })
+    const { email, password } = await loginSchema.validate(body, {
+      abortEarly: false
+    })
 
-    const existingUser = await User.findByEmail(user.email)
+    const user = await User.findByEmail(email)
 
-    if (!existingUser) {
-      throw new NotFoundError(`User with email ${user.email} not found`)
+    if (!user || !(await user.passwordMatches(password))) {
+      throw new UnauthorizedError('Email or password is invalid')
     }
 
-    if (!(await existingUser.passwordMatches(user.password))) {
-      throw new UnauthorizedError(`Email or password is invalid`)
-    }
-
-    const token = generateToken(existingUser)
-    ctx.body = { token }
+    ctx.body = { token: generateToken(user) }
   }
 }
