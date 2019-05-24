@@ -1,17 +1,13 @@
 const debug = require('debug')('app:mongoose')
 const mongoose = require('mongoose')
-const config = require('../config')
+const { NODE_ENV, DB } = require('../config')
 
 module.exports = app => {
-  if (process.env.NODE_ENV !== 'test') {
+  if (NODE_ENV !== 'test') {
     mongoose
-      .connect(config.mongoURI, {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        reconnectTries: 30
-      })
+      .connect(DB.uri, DB.options)
       .then(conn => {
-        debug(`MongoDB connected on ${config.env.env} mode`)
+        debug(`MongoDB connected on ${NODE_ENV} mode`)
       })
       .catch(err => {
         console.error(err)

@@ -18,6 +18,13 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@koa/cors@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@koa/cors/-/cors-3.0.0.tgz#df021b4df2dadf1e2b04d7c8ddf93ba2d42519cb"
+  integrity sha512-hDp+cXj6vTYSwHRJfiSpnf5dTMv3FmqNKh1or9BPJk4SHOviHnK9GoL9dT0ypt/E+hlkRkZ9edHylcosW3Ghrw==
+  dependencies:
+    vary "^1.1.2"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -882,10 +889,17 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
-dotenv@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-4.0.0.tgz#864ef1379aced55ce6f95debecdce179f7a0cd1d"
-  integrity sha1-hk7xN5rO1Vzm+V3r7NzhefegzR0=
+dotenv-flow@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/dotenv-flow/-/dotenv-flow-0.4.0.tgz#8a334b7b77ac8a3cdbaec69dd5e8e74c771500e1"
+  integrity sha512-GdIzSgFuyFfSP00g751eUsL+3n2GSevG1csTRDF6lpbMCqyPzCAkvpVFJuMf1rKwl9PIrwmxoA+8wkYRNzQSwg==
+  dependencies:
+    dotenv "^7.0.0"
+
+dotenv@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-7.0.0.tgz#a2be3cd52736673206e8a85fb5210eea29628e7c"
+  integrity sha512-M3NhsLbV1i6HuGzBUH8vXrtxOk+tWmzWKDMbAVSUp3Zsjm7ywFeuwrUXhmhQyRK1q5B5GGy7hcXPbj3bnfZg2g==
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -1656,7 +1670,7 @@ helmet-csp@2.7.1:
     dasherize "2.0.0"
     platform "1.3.5"
 
-helmet@^3.9.0:
+helmet@^3.15.1:
   version "3.18.0"
   resolved "https://registry.yarnpkg.com/helmet/-/helmet-3.18.0.tgz#37666f7c861bd1ff3015e0cdb903a43501e3da3e"
   integrity sha512-TsKlGE5UVkV0NiQ4PllV9EVfZklPjyzcMEMjWlyI/8S6epqgRT+4s4GHVgc25x0TixsKvp3L7c91HQQt5l0+QA==
@@ -2159,11 +2173,6 @@ kareem@2.3.0:
   resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.3.0.tgz#ef33c42e9024dce511eeaf440cd684f3af1fc769"
   integrity sha512-6hHxsp9e6zQU8nXsP+02HGWXwTkOEw6IROhF2ZA28cYbUk4eJ6QbtZvdqZOdD9YPKghG3apk5eOCvs+tLl3lRg==
 
-kcors@^2.2.1:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/kcors/-/kcors-2.2.2.tgz#b6250e7a4f0a33c8f477b7fd0dfa11a3f3ca518d"
-  integrity sha512-rIqbKa2S0gT0wC/790jsQM6hNpABHBNWQ7+XYS1xJV6zOGxlanW+RtCmlDn6wPZsGpRk371yy8abfBgl2OTavg==
-
 keygrip@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/keygrip/-/keygrip-1.0.3.tgz#399d709f0aed2bab0a059e0cdd3a5023a053e1dc"
@@ -2221,12 +2230,12 @@ koa-convert@^1.2.0:
     co "^4.6.0"
     koa-compose "^3.0.0"
 
-koa-helmet@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/koa-helmet/-/koa-helmet-3.3.0.tgz#28fe5a8c7ed5f0f36410c2e8c99eab7031e7b714"
-  integrity sha512-kuUjVpCy8gjJkXO0JYVX8tYvX8vTVOCdogLNHuPczRaITbmd8r7EBcNrk8GzBPVQE0ZOwDUqCSaNZ6vZwsL+wA==
+koa-helmet@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/koa-helmet/-/koa-helmet-4.1.0.tgz#eb1f052fb72a14747d5f215d8707827fdea296f1"
+  integrity sha512-a/aVORiFf9LAa19iRLBixzYGd3EpHIA/Awnxg4suKuHlm2sdQJNH2MAvwNktF6W4RHtPCIOqH6rx91++QYpUVw==
   dependencies:
-    helmet "^3.9.0"
+    helmet "^3.15.1"
 
 koa-is-json@^1.0.0:
   version "1.0.0"
@@ -2242,7 +2251,7 @@ koa-jwt@^3.5.1:
     koa-unless "1.0.7"
     p-any "1.1.0"
 
-koa-logger@^3.0.1:
+koa-logger@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/koa-logger/-/koa-logger-3.2.0.tgz#8aef64d8b848fb6253a9b31aa708d0e05141f0e6"
   integrity sha512-IQhaKkWvvbjnmMIcHSK/cH2RCYt64jOxliazVF1wZdXH0KbmM5VHgn1v3r9a9mqInDPDMR+JoiErSFc83epLaQ==

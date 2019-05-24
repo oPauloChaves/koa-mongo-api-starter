@@ -1,21 +1,7 @@
-const koaJwt = require('koa-jwt')
-const { jwtSecret } = require('../config')
+const jwt = require('koa-jwt')
 
-module.exports = koaJwt({
-  getToken(ctx, opts) {
-    const { authorization } = ctx.header
+const {
+  JWT: { key, debug, secret }
+} = require('../config')
 
-    if (authorization && authorization.split(' ')[0] === 'Bearer') {
-      return authorization.split(' ')[1]
-    }
-
-    if (authorization && authorization.split(' ')[0] === 'Token') {
-      return authorization.split(' ')[1]
-    }
-
-    return null
-  },
-  secret: jwtSecret,
-  passthrough: true,
-  key: 'jwt'
-})
+module.exports = jwt({ key, debug, secret })

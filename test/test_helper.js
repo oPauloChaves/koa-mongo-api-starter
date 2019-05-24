@@ -1,19 +1,18 @@
 const mongoose = require('mongoose')
 const { MongoMemoryServer } = require('mongodb-memory-server')
+const { DB } = require('../src/config')
 
 let mongoServer
-const opts = { useCreateIndex: true, useNewUrlParser: true }
 
-before(done => {
-  mongoServer = new MongoMemoryServer()
-  mongoServer
-    .getConnectionString()
-    .then(mongoUri => {
-      return mongoose.connect(mongoUri, opts, err => {
-        if (err) done(err)
-      })
-    })
-    .then(() => done())
+before(async () => {
+  try {
+    mongoServer = new MongoMemoryServer()
+    const mongoUri = await mongoServer.getConnectionString()
+    await mongoose.connect(mongoUri, DB.options)
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
 })
 
 after(() => {

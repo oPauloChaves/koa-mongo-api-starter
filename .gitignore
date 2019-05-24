@@ -22,7 +22,10 @@ node_modules
 # Optional npm cache directory
 .npm
 
-.env
 .tern-port
+
+# local .env* files
+.env.local
+.env.*.local
 
 coverage

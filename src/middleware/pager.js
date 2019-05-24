@@ -1,3 +1,5 @@
+const { PAGER } = require('../config')
+
 /**
  * Set the params needed for pagination
  *
@@ -14,7 +16,7 @@ module.exports = (ctx, next) => {
 
   const { query } = ctx
 
-  query.limit = parseInt(query.limit, 10) || 20
+  query.limit = parseInt(query.limit, 10) || PAGER.limit
   query.skip = query.offset = parseInt(query.offset, 10) || 0
 
   if (query.page) {
