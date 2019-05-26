@@ -1,12 +1,12 @@
 const Router = require('koa-router')
-const ctrl = require('./controller')
-const {getAuth} = require('../../lib/helpers')
+const controller = require('./controller')
+const jwt = require('../../middleware/jwt')
 
 const router = new Router()
 
-router.get('/users', getAuth(), ctrl.list)
-router.post('/users', ctrl.register)
-router.put('/users', getAuth(), ctrl.update)
-router.post('/login', ctrl.login)
+router.get('/users', jwt, controller.list)
+router.post('/users', controller.register)
+router.put('/users/:id', jwt, controller.update)
+router.post('/login', controller.login)
 
 module.exports = router.routes()

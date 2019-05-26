@@ -1,50 +1,56 @@
 const path = require('path')
 
-const ROOT = path.resolve(__dirname, '../')
+const ROOT = path.resolve(__dirname, '../../')
+const SRC_DIR = path.resolve(__dirname, '../')
 
 const {
   NODE_ENV = 'development',
-  PORT = 8080,
-  HOST = 'localhost',
-  JWT_SECRET = 'unGu3sSaBlE',
-  MONGO_URI = 'mongodb://mongo:27017/koaapi'
+  PORT = 3000,
+  JWT_SECRET = 's3cr3t',
+  JWT_EXPIRES_IN = '7d',
+  MONGODB_URI = 'mongodb://127.0.0.1:27017/finances',
+  DEBUG
 } = process.env
 
-const isProd = NODE_ENV === 'production'
-const isTest = NODE_ENV === 'test'
-const isDev = NODE_ENV === 'development'
-
 module.exports = {
-  server: {
-    port: PORT,
-    host: HOST,
-    root: ROOT
+  ROOT,
+  SRC_DIR,
+  NODE_ENV,
+  DEBUG,
+
+  IS_PROD: NODE_ENV === 'production',
+  IS_DEV: NODE_ENV === 'development',
+  IS_TEST: NODE_ENV === 'test',
+
+  PORT,
+
+  DB: {
+    uri: MONGODB_URI,
+    options: {
+      useCreateIndex: true,
+      useNewUrlParser: true,
+      reconnectTries: 30
+    }
   },
 
-  env: {
-    env: NODE_ENV,
-    isDev,
-    isProd,
-    isTest
-  },
-
-  cors: {
+  CORS: {
     origin: '*',
     exposeHeaders: ['Authorization'],
     credentials: true,
-    allowMethods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Authorization', 'Content-Type'],
     keepHeadersOnError: true
   },
 
-  bodyParser: {
-    enableTypes: ['json']
+  JWT: {
+    secret: JWT_SECRET,
+    key: 'user',
+    debug: !this.IS_PROD,
+    options: {
+      expiresIn: JWT_EXPIRES_IN
+    }
   },
 
-  mongoURI: MONGO_URI,
-
-  jwtSecret: JWT_SECRET,
-  jwtOptions: {
-    expiresIn: '7d'
+  PAGER: {
+    limit: 10
   }
 }

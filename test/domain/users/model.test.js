@@ -1,71 +1,27 @@
-import test from 'ava'
-import mongoose from 'mongoose'
-import {MongoDBServer} from 'mongomem'
+require('should')
+require('../../test_helper')
+const User = require('../../../src/domain/users/model')
 
-import User from 'domain/users/model'
+describe('Users', () => {
+  it('should create a user', async () => {
+    const user = await new User({
+      name: 'test',
+      email: 'test@test.tt',
+      password: 'test'
+    }).save()
 
-mongoose.Promise = Promise
+    user.isNew.should.be.eql(false)
+  })
 
-test.before('start server', async t => {
-  await MongoDBServer.start()
-})
-
-test.after.always('cleanup', t => {
-  MongoDBServer.tearDown() // Cleans up temporary file storage
-})
-
-test.beforeEach(async t => {
-  // create a local instance for isolated tests
-  const db = new mongoose.Mongoose()
-  await db.connect(await MongoDBServer.getConnectionString(), {useMongoClient: true})
-
-  // copy user schema from global instance to local instance
-  db.model('User', User.schema)
-
-  // make local instance available to the tests
-  t.context.db = db
-})
-
-test('it should find no users', async t => {
-  const {db} = t.context
-  const UserModel = db.model('User')
-
-  const users = await UserModel.list()
-
-  t.deepEqual(users, [])
-})
-
-test('it should create a user', async t => {
-  const {db} = t.context
-  const UserModel = db.model('User')
-
-  const data = {
-    email: 'bot1@test.com',
-    password: '12345678',
-    name: 'I am a bot'
-  }
-
-  const user = await new UserModel(data).save()
-
-  t.is(data.email, user.email)
-})
-
-test('it should update the user profile', async t => {
-  const {db} = t.context
-  const UserModel = db.model('User')
-
-  const data = {
-    email: 'bot1@test.com',
-    password: '12345678',
-    name: 'I am a bot'
-  }
-
-  const user = await new UserModel(data).save()
-  t.is(data.email, user.email)
-
-  const newData = {
-    name: 'A new name'
-  }
-  await user.updateProfile(newData)
-  t.is(newData.name, user.name)
+  it('should not allow duplicate email', async () => {
+    try {
+      await new User({
+        name: 'test',
+        email: 'test@test.tt',
+        password: 'test'
+      }).save()
+    } catch (err) {
+      err.name.should.be.eql('DuplicateKeyError')
+    }
+  })
 })

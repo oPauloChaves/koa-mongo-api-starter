@@ -1,13 +1,13 @@
 const User = require('./model')
-const {generateToken} = require('../../lib/helpers')
-const {NotFoundError, UnauthorizedError} = require('../../lib/errors')
+const { generateToken } = require('../../lib/helpers')
+const { UnauthorizedError } = require('../../lib/errors')
+const { loginSchema, userSchema } = require('./schema')
 
 module.exports = {
-
   async list(ctx) {
-    const {skip, limit} = ctx.query
+    const { skip, limit } = ctx.query
 
-    const users = await User.list({skip, limit})
+    const users = await User.list({ skip, limit })
 
     ctx.body = users
   },
@@ -16,41 +16,36 @@ module.exports = {
    * Registers a new user and logs him in by returnin a token
    */
   async register(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
+    const { body } = ctx.request
 
-    const opts = {abortEarly: false, context: {validatePassword: true}}
-
-    user = await ctx.app.schemas.user.validate(user, opts)
+    let user = await userSchema.validate(body, {
+      abortEarly: false,
+      context: { validatePassword: true }
+    })
 
     user = await new User(user).save()
 
     ctx.status = 201
     ctx.set('Location', `${ctx.URL}/${user.id}`)
 
-    const token = generateToken(user)
-    ctx.body = {token}
+    ctx.body = { token: generateToken(user) }
   },
 
   async update(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
-
-    const opts = {abortEarly: false, context: {validatePassword: true}}
-
-    user = await ctx.app.schemas.user.validate(user, opts)
-
-    const userId = ctx.state.user.id
-    const existingUser = await User.getById(userId)
-
-    await existingUser.updateProfile(user)
-
-    ctx.status = 200
-    ctx.body = {
-      id: existingUser.id,
-      name: existingUser.name,
-      email: existingUser.email
-    }
+    // const { body }
+    // const { body } = ctx.request
+    // let { user = {} } = body
+    // const opts = { abortEarly: false, context: { validatePassword: true } }
+    // user = await ctx.app.schemas.user.validate(user, opts)
+    // const userId = ctx.state.user.id
+    // const existingUser = await User.getById(userId)
+    // await existingUser.updateProfile(user)
+    // ctx.status = 200
+    // ctx.body = {
+    //   id: existingUser.id,
+    //   name: existingUser.name,
+    //   email: existingUser.email
+    // }
   },
 
   /**
@@ -58,22 +53,18 @@ module.exports = {
    * then return a token if email and password match
    */
   async login(ctx) {
-    const {body} = ctx.request
-    let {user = {}} = body
+    const { body } = ctx.request
 
-    user = await ctx.app.schemas.login.validate(user, {abortEarly: false})
+    const { email, password } = await loginSchema.validate(body, {
+      abortEarly: false
+    })
 
-    const existingUser = await User.findByEmail(user.email)
+    const user = await User.findByEmail(email)
 
-    if (!existingUser) {
-      throw new NotFoundError(`User with email ${user.email} not found`)
+    if (!user || !(await user.passwordMatches(password))) {
+      throw new UnauthorizedError('Email or password is invalid')
     }
 
-    if (!await existingUser.passwordMatches(user.password)) {
-      throw new UnauthorizedError(`Email or password is invalid`)
-    }
-
-    const token = generateToken(existingUser)
-    ctx.body = {token}
+    ctx.body = { token: generateToken(user) }
   }
 }

@@ -1,32 +1,34 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const {DuplicateKeyError} = require('../../lib/errors')
+const bcrypt = require('bcryptjs')
+const { DuplicateKeyError } = require('../../lib/errors')
+const { Schema } = mongoose
 
-const Schema = mongoose.Schema
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    password_reset_expires: {
+      type: Schema.Types.Date
+    },
+    password_reset_token: {
+      type: String
+    }
+  },
+  { timestamps: true }
+)
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  password_reset_expires: {
-    type: Schema.Types.Date
-  },
-  password_reset_token: {
-    type: String
-  }
-}, { timestamps: true })
-
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function(next) {
   const user = this
   if (!user.isModified('password')) {
     return next()
@@ -35,49 +37,41 @@ UserSchema.pre('save', async function (next) {
   next()
 })
 
-UserSchema.post('save', function(error, doc, next) {
+UserSchema.post('save', function postSave(error, doc, next) {
   if (error.name === 'MongoError' && error.code === 11000) {
-    next(new DuplicateKeyError(`email;email ${doc.email} has already been taken.`))
+    next(new DuplicateKeyError('email;email has already been taken.'))
   } else {
     next(error)
   }
 })
 
 UserSchema.methods = {
-  async passwordMatches(rawPassword) {
+  passwordMatches(rawPassword) {
     return bcrypt.compare(rawPassword, this.password)
   },
 
-  async updateProfile({name}) {
+  updateProfile({ name }) {
     this.name = name
     return this.save()
   }
 }
 
 UserSchema.statics = {
-
-  async getById(id) {
-    const user = await this.findById(id).exec()
-
-    if (user) return user
-
-    let error = new Error('No such user exists!')
-    error.status = 404
-    return Promise.reject(error)
+  getById(id) {
+    return this.findById(id).exec()
   },
 
-  async findByEmail(email) {
+  findByEmail(email) {
     return this.findOne({ email }).exec()
   },
 
-  async list({ skip = 0, limit = 20 } = {}) {
-    return this.find({}, {id: 1, name: 1, email: 1})
+  list({ skip = 0, limit = 20 } = {}) {
+    return this.find({}, { id: 1, name: 1, email: 1 })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec()
   }
-
 }
 
 module.exports = mongoose.model('User', UserSchema)
