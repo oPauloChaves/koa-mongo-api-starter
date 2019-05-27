@@ -6,7 +6,8 @@ A boilerplate to get started building a REST API with Koa, MongoDB and Docker
 
 - [Koa](http://koajs.com/)
 - [Mongoose](http://mongoosejs.com/)
-- Isolated integration tests with [AVA](https://github.com/avajs/ava) and [mongomen](https://github.com/CImrie/mongomem)
+- [Mocha](https://mochajs.org)
+- [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server)
 - Password encryption with [bcryptjs](https://github.com/dcodeIO/bcrypt.js)
 - [ESLint](https://eslint.org/) with [standard config](https://github.com/standard/eslint-config-standard)
 - [Nodemon](https://github.com/remy/nodemon) to restart the server whenever you make changes
@@ -42,7 +43,7 @@ $ npm install
 
 Command             | Action                   |
 --------------------|--------------------------|
-`yarn run dev`      | Run in development mode  |
+`yarn dev`          | Run in development mode  |
 `yarn start`        | Run in production mode   |
 `yarn test`         | Run the tests once       |
 `yarn test:watch`   | Run and watch the tests  |
