@@ -52,5 +52,10 @@
   },
   "engines": {
     "node": ">= 8.0.0"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.0.3"
+    }
   }
 }
