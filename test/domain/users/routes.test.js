@@ -72,30 +72,50 @@ describe('User.routes', () => {
       await User.deleteMany({}).exec()
     })
 
-    it('return a list of users', async () => {
-      let data1 = {
-        name: 'user1',
-        email: 'user1@test.js',
-        password: '12345678'
-      }
-      let data2 = {
-        name: 'user2',
-        email: 'user2@test.js',
-        password: '12345678'
-      }
+    describe('when authenticated', () => {
+      it('return a list of users', async () => {
+        let data1 = {
+          name: 'user1',
+          email: 'user1@test.js',
+          password: '12345678'
+        }
+        let data2 = {
+          name: 'user2',
+          email: 'user2@test.js',
+          password: '12345678'
+        }
 
-      const [user1] = await Promise.all([
-        request.post('/api/users').send(data1),
-        request.post('/api/users').send(data2)
-      ])
+        const [user1] = await Promise.all([
+          request.post('/api/users').send(data1),
+          request.post('/api/users').send(data2)
+        ])
 
-      const token = user1.body.token
-      const res = await request
-        .get('/api/users')
-        .set('Authorization', `Bearer ${token}`)
+        const token = user1.body.token
+        const res = await request
+          .get('/api/users')
+          .set('Authorization', `Bearer ${token}`)
 
-      res.status.should.be.eql(200)
-      res.body.should.have.size(2)
+        res.status.should.be.eql(200)
+        res.body.should.have.size(2)
+      })
+    })
+
+    describe('when not authenticated', () => {
+      it('returns 401', async () => {
+        let data = {
+          name: 'user1',
+          email: 'user1@test.js',
+          password: '12345678'
+        }
+
+        await request.post('/api/users').send(data)
+
+        const res = await request
+          .get('/api/users')
+          .set('Authorization', `Bearer invalidTok3n`)
+
+        res.status.should.be.eql(401)
+      })
     })
   })
 })
