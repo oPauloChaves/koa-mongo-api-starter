@@ -1,4 +1,4 @@
-FROM node:8.4
+FROM node:lts-alpine
 
 ENV NPM_CONFIG_LOGLEVEL warn
 
@@ -9,11 +9,6 @@ RUN mkdir -p /koa-mongo/api && cd /koa-mongo/api && ln -s /tmp/node_modules
 WORKDIR /koa-mongo/api
 COPY . .
 
-EXPOSE 8080
+EXPOSE 3000
 
-CMD if [ ${NODE_ENV} = production ]; \
-	then \
-	npm start; \
-	else \
-	npm run dev; \
-	fi
+CMD ["npm", "start"]

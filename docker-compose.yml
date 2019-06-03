@@ -18,12 +18,12 @@ services:
     volumes:
       - .:/koa-mongo/api
     ports:
-      - "8080:8080"
+      - "3000:3000"
     links:
       - mongo
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGODB_URI=${MONGO_URI}
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/appdb
 
 volumes:
   data_koaapi:
